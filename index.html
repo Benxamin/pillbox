@@ -1,0 +1,378 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Combobox Component</title>
+    <script src="js/jquery.min.js"></script>
+    <style>
+/* Reset */
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, code, del, dfn, em, img, q, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; font-weight: inherit; font-style: inherit; font-size: 100%; font-family: inherit; vertical-align: baseline; }
+body { line-height: 1.5; background: #fff; margin: 1.5em 0; font-family:'Helvetica Neue', Helvetica, Arial, Geneva, sans; }
+table { border-collapse: collapse; border-spacing: 0; }
+caption, th, td { text-align: left; font-weight:400; }
+blockquote:before, blockquote:after, q:before, q:after { content: ""; }
+blockquote, q { quotes: "" ""; }
+a img { border: none; }
+input,textarea { margin: 0; }
+
+/* Removes Firefox imposed outline */
+a { outline: none; }
+* { box-sizing:border-box;}
+
+/* Clearfix  */
+.cf { display: inline-block; }
+.cf:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+* html .cf { height: 1%; }
+.cf { display: block; }
+
+/* Layout */
+body { color:#333; text-align:center; }
+.site-wrap { background:#bed6ff; margin:0 auto; padding:50px; position:realtive; width:650px; }
+.page-title { color:#666; font-size:50px; font-weight:100; margin-bottom:1em; }
+
+form { text-align:left; }
+.hide { display: none !important; }
+a { color:#333; }
+
+/* Pillbox */
+.pillbox { background:#fff; border:1px solid #aaa; border-radius:0.25em; padding:0.5em 0.5em 0.25em; position:relative; }
+.pillbox a { text-decoration:none; }
+.pill { border:1px solid #ccc; border-radius:2px; background:#f1f1f1; display:inline-block; margin:0 0.25em 0.25em 0; padding:0.25em 1.5em 0.25em 0.5em; position:relative; }
+.pill-close { background:#ccc; color:#666; cursor:pointer; top:0; bottom:0; right:-1px; padding: 0 4px; position:absolute; vertical-align:middle; }
+.pill:focus,
+.pill:hover,
+.pill.over { border-color:#999; background:#d1d1d1; }
+.pill:focus .pill-close,
+.pill:hover .pill-close,
+.over .pill-close { background-color:#999; color:#333; }
+.pillbox-results { border:1px solid #555; border-top-color:#555; border-bottom:2px solid #888; font-size:10px; line-height:1.4; max-height:50vh; overflow-x:auto; position:absolute; right:0; top:4.125em; width:100%; box-shadow: 0 5px 12px rgba(33,33,33,0.25); }
+.pillbox-result-item { background:#fff; border-top:1px solid #f1f1f1; border-bottom: 1px solid #e1e1e1; cursor:pointer; display:block; font-size:1.2em; list-style:none; padding:0 0 0 48px; position:relative; min-height:48px; }
+.pillbox-result-item:first-child { border-top:none; }
+.pillbox-result-item:last-child { border-bottom:none; }
+.pillbox-result-item a { color:#333; display:block; min-height:48px; padding:0.25em 1em; }
+.pillbox-result-item a:focus,
+.pillbox-result-item a:hover,
+.pillbox-result-item.over, 
+.pillbox-result-item a.current { background:#f1f1f1; }
+.pillbox-search { background:#f1f1f1; border:none; color:#474747; font-size:1em; padding:0.25em 0.5em; margin-bottom: 0.25em; width:100%;}
+.pill-thumb { background:#ccc; display:block; height:48px; width:48px; position:absolute; top:0; left:0;}
+.pill-name { clear:left; float:left; font-weight:600; }
+.pill-email,
+.pill-dept { color:#999; float:right; }
+.pill-title { color:#999; clear:left; float:left; }
+    </style>
+  </head>
+  <body>
+    <div class="site-wrap">
+      <h1 class="page-title">Pillbox</h1>
+      <p></p>
+      
+      <form method="POST" action="/">
+
+        <div class="inpt">
+          <div class="pillbox">
+            <!-- <a href="#" class="pill">First (Pref) Lastname<span class="pill-close">&times;</span></a> -->
+            <!-- <a href="#" class="pill over">First (Pref) Lastname<span class="pill-close">&times;</span></a> -->
+            <input type="text" class="pillbox-search txt" placeholder="Who?">
+            <ul class="pillbox-results hide">
+              <li  class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Ben (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benjamin (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Bendar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benetar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Brandon (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li  class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Ben (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benjamin (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Bendar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benetar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Brandon (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li  class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Ben (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benjamin (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Bendar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Benetar (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+              <li class="pillbox-result-item"><a href="#" class="cf">
+                <span class="pill-thumb"><img src="" /></span>
+                <span class="pill-name">Brandon (Preferred) LastName</span>
+                <span class="pill-email">first.lastname@company.com</span>
+                <span class="pill-title">Director</span>
+                <span class="pill-dept">Marketing</span>
+              </a>
+              </li>
+
+            </ul>
+
+          </div>
+        </div>
+
+      </form>
+
+    </div>
+    <script>
+(function($){
+  var pillboxQuery = ".pillbox";
+  var searchBoxQuery = ".pillbox-search";
+  var pillQuery = ".pill";
+  var pillCloseQuery = ".pill-close";
+  var resultsQuery = ".pillbox-results";
+  var resultItemQuery = ".pillbox-result-item";
+
+  var pillClass = pillQuery.replace(/\./g, "");
+  var pillCloseClass = pillCloseQuery.replace(/\./g, "");
+
+  var arrowUp = 38;
+  var arrowDown = 40;
+  var arrowLeft = 39;
+  var arrowRight = 37;
+  var backspace = 8;
+  var tab = 9;
+  var enter = 13;
+  var shift = 16;
+  var esc = 27;
+  var spacebar = 32;
+
+  var pillTemplate = '<a href="#" class="' +pillClass+ '">{{name}}<span class="pill-close">&times;</span></a>';
+
+  var searchUsers = function(userQuery){
+    console.log('userQuery:', userQuery);
+    // console.log($(resultsQuery).find('.pill-name')); //.match(userQuery).addClass('test');
+  };
+  var replaceValue = function(element, userQuery) {
+    element.value = userQuery.trimLeft().replace(/\s+/g, " ");
+  };
+  var showResults = function($resultsList) {
+    $resultsList.removeClass('hide').addClass('show');
+  };
+  var hideResults = function($resultsList) {
+    $resultsList.removeClass('show').addClass('hide');
+  };
+  var pickCurrentItem = function($this, $resultsList) {
+    var currentName = $this.find(resultItemQuery+ " a.current").find(".pill-name")[0].innerHTML;
+    var $newPill = $(pillTemplate.replace(/{{name}}/g, currentName));
+    // We can attach events to insertedPill.
+    var insertedPill= $('.pillbox')[0].insertBefore($newPill[0], $('.pillbox-search')[0]);
+    hideResults($resultsList);
+    updatePillboxLayout();
+  };
+  var checkForPills = function() {
+    var pills = $(pillQuery);
+    if (pills && pills.length > 0) { 
+      return true;
+    }
+    return false;
+  };
+  var updatePillboxLayout = function() {
+    var searchBoxWidth = (checkForPills()) ? 'auto' : '100%';
+console.log('searchBoxWidth', searchBoxWidth);
+    var tall = parseInt($(pillboxQuery)[0].offsetHeight, 10) - 2;
+console.log('tall', tall);    
+    $(searchBoxQuery).css({'width':searchBoxWidth});
+    $(resultsQuery).css({'top':tall+'px'});
+  };
+  $(document).on('keyup', pillQuery, function(e) {
+    e.preventDefault();
+    var keycode = e.keycode || e.which;
+    
+    switch (keycode) {
+      case esc:
+        $(e.target).trigger("");
+        $(e.target).blur();
+        break;
+
+      case backspace:
+        $(e.target).trigger("remove-pill");
+        break;
+    }
+  });  
+  $(document).on("click", pillboxQuery, function() {
+    $(this).trigger("focus-search");
+  });
+  $(document).on("click", pillCloseQuery, function() {
+    $(this).trigger("remove-pill");
+  });
+  $(document).on("focus-search", function() {
+    $(searchBoxQuery).focus();
+  });
+  $(document).on("remove-pill", function(e){
+    if (e.target.className === pillClass) $(e.target).remove();
+    if (e.target.className === pillCloseClass) $(e.target).parent().remove();
+    updatePillboxLayout();
+  });
+  $(document).ready(function(){
+    var $searchbox = $(searchBoxQuery);
+    var $resultsPanel = $(resultsQuery);
+
+    $searchbox.on('keyup', function(e) {
+      var keycode = e.keycode || e.which;
+      var searchbox = $(this)[0];
+      var val = searchbox.value;
+      
+      if ($resultsPanel.hasClass('show') && keycode === tab) {
+        return;
+      }
+      if (val && val.length >= 2) { 
+        searchUsers(val);
+        replaceValue(searchbox, val);
+        showResults($resultsPanel);
+      }
+    });
+    $(pillQuery+ ", " +resultItemQuery).hover(function() {
+      $(this).addClass('over');
+    }, function(){
+      $(this).removeClass('over');
+    });
+
+    $(resultItemQuery+ " a")
+      .on('focus', function() { $(this).trigger("result-item-focus"); })
+      .on('blur', function() { $(this).trigger("result-item-blur"); })
+      .on('click', function() { $(this).trigger("select-current-item") });
+
+    $resultsPanel
+      .on('result-item-focus', function(e) { $(e.target).addClass("current"); })
+      .on('result-item-blur', function(e) { $(e.target).removeClass("current"); })
+      .on('select-current-item', function(e) { pickCurrentItem($(this), $resultsPanel); })
+      .on('keyup', function(e) {
+        var keycode = e.keycode || e.which;
+
+          switch (keycode) {
+          case tab:
+            if (e.shiftKey) {
+              $(this).trigger("select-prev-item");
+              break;
+            }
+          case arrowDown:
+          case arrowRight:
+            e.preventDefault();
+            $(this).trigger("select-next-item");
+            break;
+
+          case arrowUp:
+          case arrowLeft:
+            e.preventDefault();
+            $(this).trigger("select-prev-item");
+            break;
+
+          case spacebar:
+          case enter:
+            e.preventDefault();
+            $(this).trigger("select-current-item");
+            break;
+
+          default:
+            break;
+        }
+      });
+  });
+}(jQuery))
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
