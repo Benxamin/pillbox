@@ -227,7 +227,7 @@ a { color:#333; }
   var esc = 27;
   var spacebar = 32;
 
-  var pillTemplate = '<a href="#" class="' +pillClass+ '">{{name}}<span class="pill-close">&times;</span></a>';
+  var pillTemplate = '<a href="#" class="' +pillClass+ '">{{name}}<span class="' +pillCloseClass+ '">&times;</span></a>';
 
   var searchUsers = function(userQuery){
     console.log('userQuery:', userQuery);
@@ -247,7 +247,7 @@ a { color:#333; }
     var $newPill = $(pillTemplate.replace(/{{name}}/g, currentName));
     // We can attach events to insertedPill.
     var insertedPill= $('.pillbox')[0].insertBefore($newPill[0], $('.pillbox-search')[0]);
-    hideResults($resultsList);
+    $this.trigger("hide-results");
     updatePillboxLayout();
   };
   var checkForPills = function() {
@@ -258,42 +258,47 @@ a { color:#333; }
     return false;
   };
   var updatePillboxLayout = function() {
+    // Update input width first.
     var searchBoxWidth = (checkForPills()) ? 'auto' : '100%';
-console.log('searchBoxWidth', searchBoxWidth);
-    var tall = parseInt($(pillboxQuery)[0].offsetHeight, 10) - 2;
-console.log('tall', tall);    
     $(searchBoxQuery).css({'width':searchBoxWidth});
+
+    // Then update the dropdown.
+    var tall = parseInt($(pillboxQuery)[0].offsetHeight, 10) - 1;
     $(resultsQuery).css({'top':tall+'px'});
   };
-  $(document).on('keyup', pillQuery, function(e) {
-    e.preventDefault();
-    var keycode = e.keycode || e.which;
-    
-    switch (keycode) {
-      case esc:
-        $(e.target).trigger("");
-        $(e.target).blur();
-        break;
+  $(document)
+    .on('keyup', pillQuery, function(e) {
+      e.preventDefault();
+      var keycode = e.keycode || e.which;
 
-      case backspace:
-        $(e.target).trigger("remove-pill");
-        break;
-    }
-  });  
-  $(document).on("click", pillboxQuery, function() {
-    $(this).trigger("focus-search");
-  });
-  $(document).on("click", pillCloseQuery, function() {
-    $(this).trigger("remove-pill");
-  });
-  $(document).on("focus-search", function() {
-    $(searchBoxQuery).focus();
-  });
-  $(document).on("remove-pill", function(e){
-    if (e.target.className === pillClass) $(e.target).remove();
-    if (e.target.className === pillCloseClass) $(e.target).parent().remove();
-    updatePillboxLayout();
-  });
+      switch (keycode) {
+        case esc:
+          $(e.target).trigger("");
+          $(e.target).blur();
+          break;
+
+        case backspace:
+          $(e.target).trigger("remove-pill");
+          break;
+
+        case tab:
+          if (e.shiftKey) {
+            $(this).trigger("hide-results");
+          }
+          break;
+      }
+    })
+    .on("click", pillboxQuery, function() { $(this).trigger("focus-search"); })
+    .on("click", pillCloseQuery, function() { $(this).trigger("remove-pill"); })
+    .on("focus-search", function() { $(searchBoxQuery).focus(); })
+    .on("remove-pill", function(e){
+      if (e.target.className === pillClass) $(e.target).remove();
+      if (e.target.className === pillCloseClass) $(e.target).parent().remove();
+      updatePillboxLayout();
+    })
+    .on("show-results", function() { showResults($(resultsQuery)); })
+    .on("hide-results", function() { hideResults($(resultsQuery)); });
+
   $(document).ready(function(){
     var $searchbox = $(searchBoxQuery);
     var $resultsPanel = $(resultsQuery);
@@ -303,13 +308,23 @@ console.log('tall', tall);
       var searchbox = $(this)[0];
       var val = searchbox.value;
       
-      if ($resultsPanel.hasClass('show') && keycode === tab) {
-        return;
+      switch (keycode) {
+        case esc:
+          $(this).trigger("hide-results");
+          break;
+        default:
+          if (val && val.length >= 2) {
+            // $(this).trigger("search-for-users");
+            replaceValue(searchbox, val);
+            $(this).trigger("show-results");
+          }
+          break;
       }
-      if (val && val.length >= 2) { 
-        searchUsers(val);
-        replaceValue(searchbox, val);
-        showResults($resultsPanel);
+    }).on('keydown', function(e) {
+      var keycode = e.keycode || e.which;
+      if (keycode === enter) {
+        e.preventDefault();
+        $(this).trigger("show-results");
       }
     });
     $(pillQuery+ ", " +resultItemQuery).hover(function() {
@@ -321,7 +336,7 @@ console.log('tall', tall);
     $(resultItemQuery+ " a")
       .on('focus', function() { $(this).trigger("result-item-focus"); })
       .on('blur', function() { $(this).trigger("result-item-blur"); })
-      .on('click', function() { $(this).trigger("select-current-item") });
+      .on('click', function() { $(this).trigger("select-current-item"); });
 
     $resultsPanel
       .on('result-item-focus', function(e) { $(e.target).addClass("current"); })
@@ -330,7 +345,12 @@ console.log('tall', tall);
       .on('keyup', function(e) {
         var keycode = e.keycode || e.which;
 
-          switch (keycode) {
+        switch (keycode) {
+          case esc:
+            e.preventDefault();
+            $(this).trigger("hide-results");
+            break;
+
           case tab:
             if (e.shiftKey) {
               $(this).trigger("select-prev-item");
